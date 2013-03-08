@@ -1,0 +1,13 @@
+.amicons {
+	width: 700px;
+	height: 512px;
+	float: left;
+	font-family: Arial;
+	font-size: 14px;
+
+}
+.bannerIcon {
+	width: 20px;
+	height: 20px;
+	display: none;
+}
