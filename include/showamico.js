@@ -105,7 +105,6 @@ function onMouseMove(event)
 	if (mousePos.item.clickable)
 	{
 		lastItem = mousePos.item;
-		console.log(mousePos.item);
 		switch(mousePos.item.buttonFor)
 		{
 			case 'menu':
@@ -137,6 +136,7 @@ function onMouseDown(event)
 	console.log(event.point.x);
 	console.log(event.point.y);
 	console.log(hit);
+	
 	if (hit.item.clickable)
 	{
 		switch(hit.item.action)
@@ -198,18 +198,8 @@ function onFrame(event)
 {
 	if (typeof(animation) != 'undefined')
 	{	
-		if (animation.pSTdirection==1)
-			{
-				animation.petStateText.position.x+=1;
-				if (animation.petStateText.position.x>300)
-					animation.pSTdirection=0;
-			}
-		else if (animation.pSTdirection == 0)
-			{
-				animation.petStateText.position.x-=1;
-				if (animation.petStateText.position.x<100)
-					animation.pSTdirection=1;
-			}
+		animation.setStateText(pet.showState());
+		
 	}
 }
 
@@ -224,7 +214,7 @@ var getName = Base.extend(
 		this.hStart = new Point(256, 70);
 		this.headingfield = new PointText(this.hStart);
 		this.headingfield.fillColor = '#cc4433';
-		this.headingfield.fontSize = 50;
+		this.headingfield.fontSize = 30;
 		this.headingfield.content = heading;
 		this.headingfield.justification='center';
 
@@ -988,13 +978,56 @@ var Animation = Base.extend(
 {
 	initialize: function()
 	{
-		this.petStateText = new PointText(new Point(256,256));
+		this.petStateText = new PointText(new Point(286,20));
 		this.petStateText.fillColor = '#dd1155';
 		this.petStateText.justification = 'center';
-		this.petStateText.fontSize = 40;
-		this.pSTdirection=1;
+		this.petStateText.fontSize = 20;
+		
+		this.petBody = new Path();
+		this.petBody.strokeColor = 'red';
+		this.petBody.strokeWidth = 3;
+		this.petBody.add(new Point(200, 200));
+		this.petBody.add(new Point(300, 200));
+		this.petBody.add(new Point(300, 300));
+		this.petBody.add(new Point(200, 300));
+		this.petBody.closed = true;
+		this.petBody.smooth();
+		
+		this.leftEye = new Path();
+		this.leftEye.strokeColor = 'red';
+		this.leftEye.strokeWidth = 2;
+		this.leftEye.add(new Point (215,215));
+		this.leftEye.add(new Point (220,225));
+		this.leftEye.add(new Point (215,225));
+		this.leftEye.closed = true;
+		//this.leftEye.add(new Point (210,215));
+				
+		this.rigEye = new Path();
+		this.rigEye.strokeColor = 'red';
+		this.rigEye.strokeWidth = 2;
+		this.rigEye.add(new Point (285,215));
+		this.rigEye.add(new Point (280,225));
+		this.rigEye.add(new Point (290,225));
+		this.rigEye.closed = true;
+		
+		this.smileMid = new Point (248,285);
+		this.smile = new Path();
+		this.smile.strokeColor = 'red';
+		this.smile.strokeWidth = 3;
+		this.smile.add(new Point (215,285));
+		this.smile.add(this.smileMid);
+		this.smile.add(new Point (280,285));
+		this.smile.smooth();
+		
 	},
 
+	updateSmile: function(happy, cap)
+	{
+		var start = 274;
+		var move = (happy/cap)*35;
+		this.smile.segments[1].point.y = start + move;
+	},
+	
 	setStateText: function(state)
 	{
 		this.petStateText.content = state;
@@ -1061,10 +1094,12 @@ function live()
 {
 	banner.incCounter();
 	animation.setStateText(pet.showState());
+	animation.updateSmile(pet.happiness, pet.capacity);
 	pet.updatePet();
 	banner.updateBar(pet);
 	pet.save();
 	console.log(banner);
+	
 }
 
 
